@@ -15,4 +15,19 @@
  */
 package org.scalatestplus.akka
 
+/*
+Create async versions of expectMsgAnyClassOf, which has this signature and description:
+
+def expectMsgAnyClassOf[T](d: Duration, obj: Class[_ <: T]*): T
+
+An object must be received within the given time, and it must be an instance of
+at least one of the supplied Class objects; the received object will be returned.
+
+Please create four methods, with these signatures:
+
+def receivingAnyClassOf[T](obj: Class[_ <: T]*)(implicit config: PatienceConfig): Future[T]
+def receivingAnyClassOf[T](obj: Class[_ <: T]*)(timeout: Span): Future[T]
+def assertingReceiveAnyClassOf[T](obj: Class[_ <: T]*)(implicit config: PatienceConfig): Future[Assertion]
+def assertingReceiveAnyClassOf[T](obj: Class[_ <: T]*)(timeout: Span): Future[Assertion]
+*/
 trait ReceivingAnyClassOf

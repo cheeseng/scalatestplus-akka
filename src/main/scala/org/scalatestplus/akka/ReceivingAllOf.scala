@@ -16,7 +16,7 @@
 package org.scalatestplus.akka
 
 /*
-Create async versions of expectMsg, which has this signature and description:
+Create async versions of expectMsgAllOf, which has this signature and description:
 
 def expectMsgAllOf[T](d: Duration, obj: T*): Seq[T]
 
@@ -26,11 +26,10 @@ ones which equals (compared with ==) it. The full sequence of received objects i
 
 Please create four methods, with these signatures:
 
-def receivingMsgAllOf[T](obj: T*)(implicit config: PatienceConfig): Future[Seq[T]]
-def receivingMsgAllOf[T](msg: T)(implicit config: PatienceConfig): Future[T]
-def receivingMsg[T](msg: T, span: Span): Future[T]
-def assertReceivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion]
-def assertReceivingMsg[T](msg: T, span: Span): Future[Assertion]
+def receivingAllOf[T](obj: T*)(implicit config: PatienceConfig): Future[Seq[T]]
+def receivingAllOf[T](obj: T*)(timeout: Span): Future[Seq[T]]
+def assertingReceiveAllOf[T](obj: T*)(implicit config: PatienceConfig): Future[Assertion]
+def assertingReceiveAllOf[T](obj: T*)(timeout: Span): Future[Assertion]
 
 (Make sure the Seq is scala.collection.immutable.Seq.)
 */

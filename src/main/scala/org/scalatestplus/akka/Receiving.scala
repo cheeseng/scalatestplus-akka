@@ -29,5 +29,8 @@ Please create two methods, with these signatures:
 
 def receiving[T](pf: PartialFunction[Any, T])(implicit config: PatienceConfig): Future[T]
 def receiving[T](timeout: Span)(pf: PartialFunction[Any, T]): Future[T]
+
+Note: The reason there's no assertingReceive is because the partial function passed to
+receiving can already result in type Assertion.
 */
 trait Receiving

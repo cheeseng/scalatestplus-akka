@@ -15,4 +15,18 @@
  */
 package org.scalatestplus.akka
 
+/*
+Create async versions of expectNoMsg, which has this signature and description:
+
+def expectNoMsg(d: Duration)
+
+No message must be received within the given time. This also fails if a message has
+been received before calling this method which has not been removed from the queue
+using one of the other methods.
+
+Please create four methods, with these signatures:
+
+def assertingReceiveNoMsg[T](implicit config: PatienceConfig): Future[Assertion]
+def assertingReceiveNoMsg[T](span: Span): Future[Assertion]
+*/
 trait ReceivingNoMsg
