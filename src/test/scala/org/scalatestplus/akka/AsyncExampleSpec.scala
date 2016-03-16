@@ -16,15 +16,10 @@
 package org.scalatestplus.akka
 
 import akka.actor.ActorSystem
-import akka.actor.Actor
-import akka.actor.Props
-import akka.testkit.{ TestActors, TestKit, ImplicitSender }
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.Matchers
-import org.scalatest.WordSpecLike
-import org.scalatest.Matchers
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.AsyncWordSpecLike
+import akka.testkit.{ImplicitSender, TestActors, TestKit}
+import org.scalatest.{AsyncWordSpecLike, BeforeAndAfterAll, Matchers}
+import org.scalatest.exceptions.TestFailedException
+import org.scalatest.time.{Milliseconds, Span}
 
 import scala.concurrent.Future
 
@@ -79,6 +74,19 @@ class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTe
         numStr should be ("33")
         strLen should be (11)
       }
+    }
+
+    "not send any messages on its own" in {
+      val echo = system.actorOf(TestActors.echoActorProps)
+      echo ! "ping"
+      expectMsg("ping")
+      assertingReceiveNoMsg(Span(1000, Milliseconds))
+    }
+
+    "send back messages" in {
+      val echo = system.actorOf(TestActors.echoActorProps)
+      echo ! "ping"
+      recoverToSucceededIf[TestFailedException](assertingReceiveNoMsg(Span(1000, Milliseconds)))
     }
   }
 }
