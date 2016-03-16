@@ -15,10 +15,12 @@
  */
 package org.scalatestplus.akka
 
-import scala.concurrent.Future
-import scala.reflect.ClassTag
+import akka.testkit.TestKitBase
+import org.scalatest._
 
-import org.scalatest.Assertion
+import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
+import scala.reflect.ClassTag
 import org.scalatest.concurrent.PatienceConfiguration
 import org.scalatest.time.Span
 
@@ -30,32 +32,44 @@ import org.scalatest.time.Span
  * An object which is an instance of the given type (after erasure) must be received within
  * the allotted time frame; the object will be returned.
  *
- * Please implement eight methods, with these signatures:
- *
- * def receivingA[T: ClassTag](implicit config: PatienceConfig): Future[T]
- * def receivingAn[T: ClassTag](implicit config: PatienceConfig): Future[T]
- *
- * def receivingA[T: ClassTag](span: Span): Future[T]
- * def receivingAn[T: ClassTag](span: Span): Future[T]
- *
- * def assertingReceiveA[T: ClassTag](implicit config: PatienceConfig): Future[Assertion]
- * def assertingReceiveAn[T: ClassTag](implicit config: PatienceConfig): Future[Assertion]
- *
- * def assertingReceiveA[T: ClassTag](span: Span): Future[Assertion]
- * def assertingReceiveAn[T: ClassTag](span: Span): Future[Assertion]
+ * Note that this is current blocking since it calls to expectMsgType
  */
-trait ReceivingA extends PatienceConfiguration {
+trait ReceivingA extends PatienceConfiguration { this:TestKitBase with AsyncTestSuite =>
 
-  def receivingA[T: ClassTag](implicit config: PatienceConfig): Future[T] = ???
-  def receivingAn[T: ClassTag](implicit config: PatienceConfig): Future[T] = ???
+  def receivingA[T: ClassTag](implicit config: PatienceConfig): Future[T] = {
+    val fd = FiniteDuration(config.timeout.length, config.timeout.unit)
+    Future(expectMsgType[T](fd))
+  }
+  def receivingAn[T: ClassTag](implicit config: PatienceConfig): Future[T] = {
+    val fd = FiniteDuration(config.timeout.length, config.timeout.unit)
+    Future(expectMsgType[T](fd))
+  }
 
-  def receivingA[T: ClassTag](span: Span): Future[T] = ???
-  def receivingAn[T: ClassTag](span: Span): Future[T] = ???
+  def receivingA[T: ClassTag](span: Span): Future[T] = {
+    val fd = FiniteDuration(span.length, span.unit)
+    Future(expectMsgType[T](fd))
+  }
+  def receivingAn[T: ClassTag](span: Span): Future[T] = {
+    val fd = FiniteDuration(span.length, span.unit)
+    Future(expectMsgType[T](fd))
+  }
 
-  def assertingReceiveA[T: ClassTag](implicit config: PatienceConfig): Future[Assertion] = ???
-  def assertingReceiveAn[T: ClassTag](implicit config: PatienceConfig): Future[Assertion] = ???
+  def assertingReceiveA[T: ClassTag](implicit config: PatienceConfig): Future[Assertion] = {
+    val fd = FiniteDuration(config.timeout.length, config.timeout.unit)
+    Future(expectMsgType[T](fd)).map(_ => succeed)
+  }
+  def assertingReceiveAn[T: ClassTag](implicit config: PatienceConfig): Future[Assertion] = {
+    val fd = FiniteDuration(config.timeout.length, config.timeout.unit)
+    Future(expectMsgType[T](fd)).map(_ => succeed)
+  }
 
-  def assertingReceiveA[T: ClassTag](span: Span): Future[Assertion] = ???
-  def assertingReceiveAn[T: ClassTag](span: Span): Future[Assertion] = ???
+  def assertingReceiveA[T: ClassTag](span: Span): Future[Assertion] = {
+    val fd = FiniteDuration(span.length, span.unit)
+    Future(expectMsgType[T](fd)).map(_ => succeed)
+  }
+  def assertingReceiveAn[T: ClassTag](span: Span): Future[Assertion] = {
+    val fd = FiniteDuration(span.length, span.unit)
+    Future(expectMsgType[T](fd)).map(_ => succeed)
+  }
 }
 

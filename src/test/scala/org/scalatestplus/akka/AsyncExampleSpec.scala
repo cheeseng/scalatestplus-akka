@@ -16,17 +16,10 @@
 package org.scalatestplus.akka
 
 import akka.actor.ActorSystem
-import akka.actor.Actor
-import akka.actor.Props
-import akka.testkit.{ TestActors, TestKit, ImplicitSender }
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.Matchers
-import org.scalatest.WordSpecLike
-import org.scalatest.Matchers
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.AsyncWordSpecLike
+import akka.testkit.{ImplicitSender, TestActors, TestKit}
+import org.scalatest.{AsyncWordSpecLike, BeforeAndAfterAll, Matchers}
 import org.scalatest.exceptions.TestFailedException
-import org.scalatest.time.{Milliseconds, Millisecond, Span}
+import org.scalatest.time.{Milliseconds, Span}
 
 import scala.concurrent.Future
 
@@ -45,6 +38,22 @@ class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTe
       echo ! "hello world"
       val fut = Future { expectMsg("hello world") }
       fut.map(_ => succeed)
+    }
+
+    "allow itself to be used in a for expression" in {
+      val echo = system.actorOf(TestActors.echoActorProps)
+      echo ! "hello world"
+      val futStr = Future { expectMsg("hello world") }
+      val fut = for {
+        str <- futStr
+        num <- Future {
+          echo ! 33
+          expectMsg(33)
+        }
+        pair <- Future { (str, num) }
+      } yield (pair._2, pair._1)
+
+      fut.map(res => res shouldBe (33, "hello world"))
     }
 
     "not send any messages on its own" in {

@@ -17,14 +17,11 @@ package org.scalatestplus.akka
 
 import java.util.concurrent.TimeUnit
 
-import akka.testkit.TestKitBase
+import org.scalatest.concurrent.PatienceConfiguration
+import org.scalatest.time.Span
+import org.scalatest.{Assertion, AsyncTestSuite}
 
 import scala.concurrent.Future
-
-import org.scalatest.{AsyncTestSuite, Succeeded, Assertion}
-import org.scalatest.concurrent.PatienceConfiguration
-import org.scalatest.time.{Milliseconds, Span}
-
 import scala.concurrent.duration.FiniteDuration
 
 /**
