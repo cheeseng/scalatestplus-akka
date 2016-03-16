@@ -15,18 +15,30 @@
  */
 package org.scalatestplus.akka
 
-/*
-Create async versions of expectNoMsg, which has this signature and description:
+import scala.concurrent.Future
 
-def expectNoMsg(d: Duration)
+import org.scalatest.Assertion
+import org.scalatest.concurrent.PatienceConfiguration
+import org.scalatest.time.Span
 
-No message must be received within the given time. This also fails if a message has
-been received before calling this method which has not been removed from the queue
-using one of the other methods.
+/**
+ * Create async versions of expectNoMsg, which has this signature and description:
+ *
+ * def expectNoMsg(d: Duration)
+ *
+ * No message must be received within the given time. This also fails if a message has
+ * been received before calling this method which has not been removed from the queue
+ * using one of the other methods.
+ *
+ * Please implement four methods, with these signatures:
+ *
+ * def assertingReceiveNoMsg[T](implicit config: PatienceConfig): Future[Assertion]
+ * def assertingReceiveNoMsg[T](span: Span): Future[Assertion]
+ */
+trait ReceivingNoMsg extends PatienceConfiguration {
 
-Please create four methods, with these signatures:
+  def assertingReceiveNoMsg[T](implicit config: PatienceConfig): Future[Assertion] = ???
 
-def assertingReceiveNoMsg[T](implicit config: PatienceConfig): Future[Assertion]
-def assertingReceiveNoMsg[T](span: Span): Future[Assertion]
-*/
-trait ReceivingNoMsg
+  def assertingReceiveNoMsg[T](span: Span): Future[Assertion] = ???
+
+}

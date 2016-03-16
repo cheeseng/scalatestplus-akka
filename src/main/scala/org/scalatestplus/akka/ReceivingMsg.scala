@@ -15,18 +15,18 @@
  */
 package org.scalatestplus.akka
 
-/*
-Create async versions of expectMsg, which has this signature and description:
-
-def expectMsg[T](d: Duration, msg: T): T
-
-The given message object must be received within the specified time; the object will be returned.
-
-Please create four methods, with these signatures:
-
-def receivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[T]
-def receivingMsg[T](msg: T, timeout: Span): Future[T]
-def assertingReceiveMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion]
-def assertingReceiveMsg[T](msg: T, timeout: Span): Future[Assertion]
-*/
+/**
+ * Create async versions of expectMsg, which has this signature and description:
+ *
+ * def expectMsg[T](d: Duration, msg: T): T
+ *
+ * The given message object must be received within the specified time; the object will be returned.
+ *
+ * Please implement four methods, with these signatures:
+ *
+ * def receivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[T]
+ * def receivingMsg[T](msg: T, timeout: Span): Future[T]
+ * def assertingReceiveMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion]
+ * def assertingReceiveMsg[T](msg: T, timeout: Span): Future[Assertion]
+ */
 trait ReceivingMsg
