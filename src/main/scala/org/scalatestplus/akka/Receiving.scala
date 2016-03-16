@@ -41,5 +41,4 @@ trait Receiving extends PatienceConfiguration {
   def receiving[T](pf: PartialFunction[Any, T])(implicit config: PatienceConfig): Future[T] = ???
 
   def receiving[T](timeout: Span)(pf: PartialFunction[Any, T]): Future[T] = ???
-
 }

@@ -48,5 +48,4 @@ trait ReceivingAllOf extends PatienceConfiguration {
   def assertingReceiveAllOf[T](obj: T*)(implicit config: PatienceConfig): Future[Assertion] = ???
 
   def assertingReceiveAllOf[T](obj: T*)(timeout: Span): Future[Assertion] = ???
-
 }

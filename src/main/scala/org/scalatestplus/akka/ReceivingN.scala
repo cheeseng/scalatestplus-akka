@@ -40,5 +40,4 @@ trait ReceivingN extends PatienceConfiguration {
   def receivingN[T](n: Int)(implicit config: PatienceConfig): Future[Seq[Any]] = ???
 
   def receivingN[T](n: Int)(timeout: Span): Future[Seq[Any]] = ???
-
 }

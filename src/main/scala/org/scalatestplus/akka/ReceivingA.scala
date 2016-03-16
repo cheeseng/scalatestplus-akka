@@ -30,22 +30,32 @@ import org.scalatest.time.Span
  * An object which is an instance of the given type (after erasure) must be received within
  * the allotted time frame; the object will be returned.
  *
- * Please implement four methods, with these signatures:
+ * Please implement eight methods, with these signatures:
  *
  * def receivingA[T: ClassTag](implicit config: PatienceConfig): Future[T]
+ * def receivingAn[T: ClassTag](implicit config: PatienceConfig): Future[T]
+ *
+ * def receivingA[T: ClassTag](span: Span): Future[T]
  * def receivingAn[T: ClassTag](span: Span): Future[T]
+ *
  * def assertingReceiveA[T: ClassTag](implicit config: PatienceConfig): Future[Assertion]
+ * def assertingReceiveAn[T: ClassTag](implicit config: PatienceConfig): Future[Assertion]
+ *
+ * def assertingReceiveA[T: ClassTag](span: Span): Future[Assertion]
  * def assertingReceiveAn[T: ClassTag](span: Span): Future[Assertion]
  */
 trait ReceivingA extends PatienceConfiguration {
 
   def receivingA[T: ClassTag](implicit config: PatienceConfig): Future[T] = ???
+  def receivingAn[T: ClassTag](implicit config: PatienceConfig): Future[T] = ???
 
+  def receivingA[T: ClassTag](span: Span): Future[T] = ???
   def receivingAn[T: ClassTag](span: Span): Future[T] = ???
 
   def assertingReceiveA[T: ClassTag](implicit config: PatienceConfig): Future[Assertion] = ???
+  def assertingReceiveAn[T: ClassTag](implicit config: PatienceConfig): Future[Assertion] = ???
 
+  def assertingReceiveA[T: ClassTag](span: Span): Future[Assertion] = ???
   def assertingReceiveAn[T: ClassTag](span: Span): Future[Assertion] = ???
-
 }
 

@@ -40,5 +40,4 @@ trait ReceivingNoMsg extends PatienceConfiguration {
   def assertingReceiveNoMsg[T](implicit config: PatienceConfig): Future[Assertion] = ???
 
   def assertingReceiveNoMsg[T](span: Span): Future[Assertion] = ???
-
 }

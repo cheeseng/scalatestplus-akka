@@ -47,5 +47,4 @@ trait ReceivingAllClassOf extends PatienceConfiguration {
   def assertingReceiveAllClassOf[T](c: Class[_ <: T]*)(implicit config: PatienceConfig): Future[Assertion] = ???
 
   def assertingReceiveAllClassOf[T](c: Class[_ <: T]*)(timeout: Span): Future[Assertion] = ???
-
 }
