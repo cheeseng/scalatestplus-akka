@@ -15,9 +15,13 @@
  */
 package org.scalatestplus.akka
 
-import scala.concurrent.Future
+import java.util.concurrent.TimeUnit
 
-import org.scalatest.Assertion
+import akka.testkit.{TestKit, TestKitBase}
+
+import scala.concurrent.{duration, Future}
+
+import org.scalatest.{AsyncTestSuite, fixture, AsyncWordSpec, Assertion}
 import org.scalatest.concurrent.PatienceConfiguration
 import org.scalatest.time.Span
 
@@ -36,10 +40,20 @@ import org.scalatest.time.Span
  * def assertingReceiveMsg[T](msg: T, timeout: Span): Future[Assertion]
  */
 trait ReceivingMsg extends PatienceConfiguration {
+  this :TestKitBase with AsyncTestSuite =>
 
-  def receivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[T] = ???
+  import org.scalatest.Assertions._
 
-  def receivingMsg[T](msg: T, timeout: Span): Future[T] = ???
+  import duration._
+
+  def receivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[T] = {
+    receivingMsg(msg, config.timeout)
+  }
+
+  def receivingMsg[T](msg: T, timeout: Span): Future[T] = Future {
+    val duration = FiniteDuration(timeout.toNanos, TimeUnit.NANOSECONDS)
+    expectMsg(duration, msg)
+  }
 
   def assertingReceiveMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion] = ???
 
