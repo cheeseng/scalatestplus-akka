@@ -9,6 +9,8 @@ scalaVersion := "2.11.7"
 
 scalacOptions += "-deprecation"
 
+coverageEnabled := true
+
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.0-M16-SNAP1"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4.0"

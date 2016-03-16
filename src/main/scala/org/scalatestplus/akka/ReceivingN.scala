@@ -15,10 +15,15 @@
  */
 package org.scalatestplus.akka
 
+import akka.testkit.TestKitBase
+import org.scalatest.AsyncTestSuite
+
 import scala.concurrent.Future
 
 import org.scalatest.concurrent.PatienceConfiguration
 import org.scalatest.time.Span
+
+import scala.concurrent.duration.Duration
 
 /**
  * Create async versions of receiveN, which has this signature and description:
@@ -35,9 +40,17 @@ import org.scalatest.time.Span
  * Note: I'm not sure why receiveN returns a Seq[AnyRef] instead of Seq[Any]. Try to do Future[Seq[Any]].
  * Note: The reason there's no assertingReceiveN is it doesn't seem to be useful.
  */
-trait ReceivingN extends PatienceConfiguration {
+trait ReceivingN extends PatienceConfiguration with TestKitBase with AsyncTestSuite{
 
-  def receivingN[T](n: Int)(implicit config: PatienceConfig): Future[Seq[Any]] = ???
+  def receivingN[T](n: Int)(implicit config: PatienceConfig): Future[Seq[Any]] = {
+    Future{
+      receiveN(n)
+    }
+  }
 
-  def receivingN[T](n: Int)(timeout: Span): Future[Seq[Any]] = ???
+  def receivingN[T](n: Int, timeout: Span): Future[Seq[Any]] = {
+    Future{
+      receiveN(n, Duration.fromNanos(timeout.totalNanos))
+    }
+  }
 }

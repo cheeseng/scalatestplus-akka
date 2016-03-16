@@ -16,15 +16,9 @@
 package org.scalatestplus.akka
 
 import akka.actor.ActorSystem
-import akka.actor.Actor
-import akka.actor.Props
-import akka.testkit.{ TestActors, TestKit, ImplicitSender }
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.Matchers
-import org.scalatest.WordSpecLike
-import org.scalatest.Matchers
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.AsyncWordSpecLike
+import akka.testkit.{ImplicitSender, TestActors, TestKit}
+import org.scalatest.{AsyncWordSpecLike, BeforeAndAfterAll, Matchers}
+import org.scalatest.exceptions.TestFailedException
 
 import scala.concurrent.Future
 
