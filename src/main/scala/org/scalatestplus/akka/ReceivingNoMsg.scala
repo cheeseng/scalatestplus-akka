@@ -15,11 +15,17 @@
  */
 package org.scalatestplus.akka
 
+import java.util.concurrent.TimeUnit
+
+import akka.testkit.TestKitBase
+
 import scala.concurrent.Future
 
-import org.scalatest.Assertion
+import org.scalatest.{AsyncTestSuite, Succeeded, Assertion}
 import org.scalatest.concurrent.PatienceConfiguration
-import org.scalatest.time.Span
+import org.scalatest.time.{Milliseconds, Span}
+
+import scala.concurrent.duration.FiniteDuration
 
 /**
  * Create async versions of expectNoMsg, which has this signature and description:
@@ -36,8 +42,25 @@ import org.scalatest.time.Span
  * def assertingReceiveNoMsg[T](span: Span): Future[Assertion]
  */
 trait ReceivingNoMsg extends PatienceConfiguration {
+  this: AsyncTestKitLike with AsyncTestSuite =>
 
-  def assertingReceiveNoMsg[T](implicit config: PatienceConfig): Future[Assertion] = ???
+  def assertingReceiveNoMsg[T](implicit config: PatienceConfig): Future[Assertion] = {
+    assertingReceiveNoMsg(config.timeout)
+  }
 
-  def assertingReceiveNoMsg[T](span: Span): Future[Assertion] = ???
+  def assertingReceiveNoMsg[T](span: Span): Future[Assertion] = {
+    Future {
+      var clue: String = ""
+      var result = true
+      try {
+        expectNoMsg(FiniteDuration(span.toMillis, TimeUnit.MILLISECONDS))
+      } catch {
+        case err =>
+          clue = err.getMessage
+          result = false
+      }
+
+      assert(result, clue)
+    }
+  }
 }

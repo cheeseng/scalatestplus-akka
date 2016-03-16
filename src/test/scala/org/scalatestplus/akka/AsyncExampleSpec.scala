@@ -25,11 +25,13 @@ import org.scalatest.WordSpecLike
 import org.scalatest.Matchers
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.AsyncWordSpecLike
+import org.scalatest.exceptions.TestFailedException
+import org.scalatest.time.{Milliseconds, Millisecond, Span}
 
 import scala.concurrent.Future
 
 class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTestKitLike with ImplicitSender
-  with AsyncWordSpecLike with Matchers with BeforeAndAfterAll {
+  with AsyncWordSpecLike with Matchers with BeforeAndAfterAll with ReceivingNoMsg {
 
   def this() = this(ActorSystem("ExampleSpec"))
 
@@ -43,6 +45,19 @@ class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTe
       echo ! "hello world"
       val fut = Future { expectMsg("hello world") }
       fut.map(_ => succeed)
+    }
+
+    "not send any messages on its own" in {
+      val echo = system.actorOf(TestActors.echoActorProps)
+      echo ! "ping"
+      expectMsg("ping")
+      assertingReceiveNoMsg(Span(1000, Milliseconds))
+    }
+
+    "send back messages" in {
+      val echo = system.actorOf(TestActors.echoActorProps)
+      echo ! "ping"
+      recoverToSucceededIf[TestFailedException](assertingReceiveNoMsg(Span(1000, Milliseconds)))
     }
   }
 }
