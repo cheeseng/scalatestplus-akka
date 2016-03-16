@@ -41,8 +41,44 @@ class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTe
     "send back messages unchanged" in {
       val echo = system.actorOf(TestActors.echoActorProps)
       echo ! "hello world"
-      val fut = Future { expectMsg("hello world") }
+      val fut = Future {
+        expectMsg("hello world")
+      }
       fut.map(_ => succeed)
+    }
+  }
+  "An async test" can {
+    "be written in terms of a for expression" in {
+      val echo = system.actorOf(TestActors.echoActorProps)
+      echo ! "hello world"
+
+      // receivingA[T] returns a Future[T] if received by
+      // the test actor before the patience expires. So it
+      // is similar to Akka TestKit's expectMsgType[T], but
+      // for async. The implementation currently blocks, but
+      // hopefully could be made non-blocking.
+      //
+      // This for demonstrates a multi-step scenario being
+      // tested all while remaining in future space.
+      for {
+        str <- receivingA[String]
+        num <- {
+          echo ! 33
+          receivingAn[Int]
+        }
+        _ = { // can do mid-stream assertions
+          num should equal (33)
+          str should startWith ("hello")
+        }
+        (numStr, strLen) <- {
+          echo ! (num.toString, str.length)
+          receivingA[(String, Int)]
+        }
+
+      } yield { // must do at least one assertion at the end
+        numStr should be ("33")
+        strLen should be (11)
+      }
     }
   }
 }
