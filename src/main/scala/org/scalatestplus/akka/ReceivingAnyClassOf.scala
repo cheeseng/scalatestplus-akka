@@ -15,11 +15,12 @@
  */
 package org.scalatestplus.akka
 
-import scala.concurrent.Future
-
-import org.scalatest.Assertion
+import akka.testkit.TestKit
+import org.scalatest.{Assertion, AsyncTestSuite, Succeeded}
 import org.scalatest.concurrent.PatienceConfiguration
 import org.scalatest.time.Span
+import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
 
 /**
  * Create async versions of expectMsgAnyClassOf, which has this signature and description:
@@ -37,12 +38,23 @@ import org.scalatest.time.Span
  * def assertingReceiveAnyClassOf[T](obj: Class[_ <: T]*)(timeout: Span): Future[Assertion]
  */
 trait ReceivingAnyClassOf extends PatienceConfiguration {
+  
+  this: AsyncTestKitLike with AsyncTestSuite =>
+  
+  def receivingAnyClassOf[T](classes: Class[_ <: T]*)(implicit config: PatienceConfig): Future[T] = {
+    receivingAnyClassOf(config.timeout)(classes: _*)
+  }
 
-  def receivingAnyClassOf[T](obj: Class[_ <: T]*)(implicit config: PatienceConfig): Future[T] = ???
+  def receivingAnyClassOf[T](timeout: Span)(classes: Class[_ <: T]*): Future[T] = Future {
+    val fd = FiniteDuration(timeout.length, timeout.unit)
+    expectMsgAnyClassOf(fd, classes: _*)
+  }
 
-  def receivingAnyClassOf[T](obj: Class[_ <: T]*)(timeout: Span): Future[T] = ???
+  def assertingReceiveAnyClassOf[T](classes: Class[_ <: T]*)(implicit config: PatienceConfig): Future[Assertion] = {
+    assertingReceiveAnyClassOf(config.timeout)(classes: _*)
+  }
 
-  def assertingReceiveAnyClassOf[T](obj: Class[_ <: T]*)(implicit config: PatienceConfig): Future[Assertion] = ???
+  def assertingReceiveAnyClassOf[T](timeout: Span)(classes: Class[_ <: T]*): Future[Assertion] = 
+    receivingAnyClassOf(timeout)(classes: _*).map(_ => Succeeded)
 
-  def assertingReceiveAnyClassOf[T](obj: Class[_ <: T]*)(timeout: Span): Future[Assertion] = ???
 }
