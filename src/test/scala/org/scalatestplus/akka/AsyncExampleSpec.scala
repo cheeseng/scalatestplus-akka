@@ -24,7 +24,7 @@ import org.scalatest.time.{Milliseconds, Span}
 import scala.concurrent.Future
 
 class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTestKitLike with ImplicitSender
-  with AsyncWordSpecLike with Matchers with BeforeAndAfterAll with ReceivingNoMsg {
+  with AsyncWordSpecLike with Matchers with BeforeAndAfterAll {
 
   def this() = this(ActorSystem("ExampleSpec"))
 
