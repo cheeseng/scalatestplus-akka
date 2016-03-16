@@ -47,15 +47,22 @@ class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTe
     "allow itself to be used in a for expression" in {
       val echo = system.actorOf(TestActors.echoActorProps)
       echo ! "hello world"
-      val futStr = Future { expectMsg("hello world") }
+
       val fut = for {
-        str <- futStr
-        num <- Future {
+        str <- receivingA[String]
+        num <- {
           echo ! 33
-          expectMsg(33)
+          receivingAn[Int]
         }
-        pair <- Future { (str, num) }
-      } yield (pair._2, pair._1)
+        _ = {
+          num should equal (33)
+          str should startWith ("hello")
+        }
+        (s, n) <- {
+          echo ! (str, num)
+          receivingA[(String, Int)]
+        }
+      } yield (n, s)
 
       fut.map(res => res shouldBe (33, "hello world"))
     }
