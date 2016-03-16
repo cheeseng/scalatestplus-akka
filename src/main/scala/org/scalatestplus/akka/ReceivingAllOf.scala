@@ -15,4 +15,23 @@
  */
 package org.scalatestplus.akka
 
+/*
+Create async versions of expectMsg, which has this signature and description:
+
+def expectMsgAllOf[T](d: Duration, obj: T*): Seq[T]
+
+A number of objects matching the size of the supplied object array must be received within
+the given time, and for each of the given objects there must exist at least one among the received
+ones which equals (compared with ==) it. The full sequence of received objects is returned.
+
+Please create four methods, with these signatures:
+
+def receivingMsgAllOf[T](obj: T*)(implicit config: PatienceConfig): Future[Seq[T]]
+def receivingMsgAllOf[T](msg: T)(implicit config: PatienceConfig): Future[T]
+def receivingMsg[T](msg: T, span: Span): Future[T]
+def assertReceivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion]
+def assertReceivingMsg[T](msg: T, span: Span): Future[Assertion]
+
+(Make sure the Seq is scala.collection.immutable.Seq.)
+*/
 trait ReceivingAllOf

@@ -25,8 +25,8 @@ The given message object must be received within the specified time; the object 
 Please create four methods, with these signatures:
 
 def receivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[T]
-def receivingMsg[T](msg: T, span: Span): Future[T]
-def assertReceivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion]
-def assertReceivingMsg[T](msg: T, span: Span): Future[Assertion]
+def receivingMsg[T](msg: T, timeout: Span): Future[T]
+def assertingReceiveMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion]
+def assertingReceiveMsg[T](msg: T, timeout: Span): Future[Assertion]
 */
 trait ReceivingMsg

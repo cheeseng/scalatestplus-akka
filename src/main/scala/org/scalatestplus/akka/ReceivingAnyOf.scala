@@ -15,4 +15,22 @@
  */
 package org.scalatestplus.akka
 
+/*
+Create async versions of expectMsgAnyOf, which has this signature and description:
+
+def expectMsgAnyOf[T](d: Duration, obj: T*): T
+
+An object must be received within the given time, and it must be equal (compared
+with ==) to at least one of the passed reference objects; the received object will be returned.
+
+Please create four methods, with these signatures:
+
+def receivingAnyOf[T](obj: T*)(implicit config: PatienceConfig): Future[T]
+def receivingAnyOf[T](obj: T*)(timeout: Span): Future[T]
+def assertingReceiveAnyOf[T](obj: T*)(implicit config: PatienceConfig): Future[Assertion]
+def assertingReceiveAnyOf[T](obj: T*)(timeout: Span): Future[Assertion]
+
+(Make sure the Seq is scala.collection.immutable.Seq.)
+*/
 trait ReceivingAnyOf
+
