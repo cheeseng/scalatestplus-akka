@@ -15,7 +15,7 @@ class IgnoringActor extends Actor {
   }
 }
 
-class ReceivingMsgSpec(system: ActorSystem) extends AsyncTestKit(system) with ImplicitSender
+class ReceivingMsgSpec(system: ActorSystem) extends TestKit(system) with ImplicitSender with AsyncTestKitLike
   with AsyncWordSpecLike with Matchers with BeforeAndAfterAll {
 
   def this() = this(ActorSystem("ReceivingMsg"))
