@@ -15,6 +15,12 @@
  */
 package org.scalatestplus.akka
 
+import scala.concurrent.Future
+
+import org.scalatest.Assertion
+import org.scalatest.concurrent.PatienceConfiguration
+import org.scalatest.time.Span
+
 /**
  * Create async versions of expectMsg, which has this signature and description:
  *
@@ -29,4 +35,14 @@ package org.scalatestplus.akka
  * def assertingReceiveMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion]
  * def assertingReceiveMsg[T](msg: T, timeout: Span): Future[Assertion]
  */
-trait ReceivingMsg
+trait ReceivingMsg extends PatienceConfiguration {
+
+  def receivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[T] = ???
+
+  def receivingMsg[T](msg: T, timeout: Span): Future[T] = ???
+
+  def assertingReceiveMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion] = ???
+
+  def assertingReceiveMsg[T](msg: T, timeout: Span): Future[Assertion] = ???
+
+}
