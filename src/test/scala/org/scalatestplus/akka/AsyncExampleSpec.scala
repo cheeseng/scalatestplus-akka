@@ -75,18 +75,5 @@ class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTe
         strLen should be (11)
       }
     }
-
-    "not send any messages on its own" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-      echo ! "ping"
-      expectMsg("ping")
-      assertingReceiveNoMsg(Span(1000, Milliseconds))
-    }
-
-    "send back messages" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-      echo ! "ping"
-      recoverToSucceededIf[TestFailedException](assertingReceiveNoMsg(Span(1000, Milliseconds)))
-    }
   }
 }
