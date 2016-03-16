@@ -19,7 +19,6 @@ import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActors, TestKit}
 import org.scalatest.{AsyncWordSpecLike, BeforeAndAfterAll, Matchers}
 import org.scalatest.exceptions.TestFailedException
-import org.scalatest.time.{Milliseconds, Span}
 
 import scala.concurrent.Future
 
