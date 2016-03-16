@@ -15,10 +15,4 @@
  */
 package org.scalatestplus.akka
 
-import akka.testkit.TestKit
-import akka.actor.ActorSystem
-
-class AsyncTestKit(system: ActorSystem) extends TestKit(system) with ReceivingMsg with
-    Receiving with ReceivingA with ReceivingAnyOf with ReceivingAllOf with ReceivingAnyClassOf with
-    ReceivingAllClassOf with ReceivingN with ReceivingNoMsg
-
+trait ReceivingAnyOf
