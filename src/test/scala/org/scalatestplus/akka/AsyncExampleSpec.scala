@@ -28,7 +28,7 @@ import org.scalatest.AsyncWordSpecLike
 
 import scala.concurrent.Future
 
-class AsyncExampleSpec(system: ActorSystem) extends AsyncTestKit(system) with ImplicitSender
+class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTestKitLike with ImplicitSender
   with AsyncWordSpecLike with Matchers with BeforeAndAfterAll {
 
   def this() = this(ActorSystem("ExampleSpec"))

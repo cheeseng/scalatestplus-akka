@@ -15,10 +15,13 @@
  */
 package org.scalatestplus.akka
 
-import akka.testkit.TestKit
 import akka.actor.ActorSystem
+import akka.testkit.{TestKitBase, TestKit}
+import org.scalatest.{AsyncTestSuite, AsyncTestSuiteMixin}
 
-class AsyncTestKit(system: ActorSystem) extends TestKit(system) with ReceivingMsg with
+trait AsyncTestKitLike extends TestKitBase with AsyncTestSuiteMixin with ReceivingMsg with
     Receiving with ReceivingA with ReceivingAnyOf with ReceivingAllOf with ReceivingAnyClassOf with
-    ReceivingAllClassOf with ReceivingN with ReceivingNoMsg
+    ReceivingAllClassOf with ReceivingN with ReceivingNoMsg { this: AsyncTestSuite =>
+
+}
 

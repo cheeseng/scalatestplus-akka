@@ -23,7 +23,7 @@ import org.scalatest.WordSpecLike
 import org.scalatest.Matchers
 import org.scalatest.BeforeAndAfterAll
 
-class ExampleSpec(system: ActorSystem) extends AsyncTestKit(system) with ImplicitSender
+class ExampleSpec(system: ActorSystem) extends TestKit(system) with ImplicitSender
   with WordSpecLike with Matchers with BeforeAndAfterAll {
 
   def this() = this(ActorSystem("ExampleSpec"))
