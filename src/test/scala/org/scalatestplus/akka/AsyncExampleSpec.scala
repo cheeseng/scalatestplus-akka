@@ -16,24 +16,16 @@
 package org.scalatestplus.akka
 
 import akka.actor.ActorSystem
-import akka.testkit.{ImplicitSender, TestActors, TestKit}
-import org.scalatest.{AsyncWordSpecLike, BeforeAndAfterAll, Matchers}
 import org.scalatest.exceptions.TestFailedException
 
 import scala.concurrent.Future
 
-class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTestKitLike with ImplicitSender
-  with AsyncWordSpecLike with Matchers with BeforeAndAfterAll {
+class AsyncExampleSpec(system: ActorSystem) extends AsyncSpecBase(system) {
 
   def this() = this(ActorSystem("ExampleSpec"))
 
-  override def afterAll() = {
-    TestKit.shutdownActorSystem(system)
-  }
-
   "An Echo actor" should {
     "send back messages unchanged" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
       echo ! "hello world"
       val fut = Future {
         expectMsg("hello world")
@@ -43,7 +35,6 @@ class AsyncExampleSpec(system: ActorSystem) extends TestKit(system) with AsyncTe
   }
   "An async test" can {
     "be written in terms of a for expression" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
       echo ! "hello world"
 
       // receivingA[T] returns a Future[T] if received by

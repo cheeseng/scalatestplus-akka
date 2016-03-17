@@ -16,19 +16,12 @@
 package org.scalatestplus.akka
 
 import akka.actor.ActorSystem
-import akka.testkit.{TestActors, TestKit, ImplicitSender}
-import org.scalatest.{AsyncWordSpecLike, BeforeAndAfterAll, Matchers, WordSpecLike}
+import org.scalatest.time.{Seconds, Span}
+import java.util.concurrent.ExecutionException
 
-import scala.concurrent.ExecutionException
-
-class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitSender with AsyncTestKitLike
-  with AsyncWordSpecLike with Matchers with BeforeAndAfterAll {
+class ReceivingASpec(system: ActorSystem) extends AsyncSpecBase(system) {
 
   def this() = this(ActorSystem("ReceivingA"))
-
-  override def afterAll() = {
-    TestKit.shutdownActorSystem(system)
-  }
 
   case class ExpectedType()
   case class NotExpectedType()
@@ -36,8 +29,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "receivingA" should {
     "return an Future[ExpectedType] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       receivingA[ExpectedType].map{f => f should equal (ExpectedType()) }
@@ -46,8 +37,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "receivingA" should {
     "return an Future[String] when String passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       val testMessage = "Test Message"
 
       echo ! testMessage
@@ -58,8 +47,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "receivingA" should {
     "not return an Future[NotExpectedType] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       receivingA[ExpectedType].map{f => f should not equal (NotExpectedType()) }
@@ -68,8 +55,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "receivingAn" should {
     "return an Future[ExpectedType] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       receivingAn[ExpectedType].map{f => f should equal (ExpectedType()) }
@@ -78,8 +63,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "receivingAn" should {
     "not return an Future[NotExpectedType] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       receivingAn[ExpectedType].map{f => f should not equal (NotExpectedType()) }
@@ -88,8 +71,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "receivingA with span" should {
     "return an Future[ExpectedType] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       val span = patienceConfig.timeout
@@ -100,8 +81,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "receivingA with span" should {
     "not return an Future[NotExpectedType] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       val span = patienceConfig.timeout
@@ -112,8 +91,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "receivingAn with span" should {
     "return an Future[ExpectedType] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       val span = patienceConfig.timeout
@@ -124,8 +101,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "receivingAn with span" should {
     "not return an Future[NotExpectedType] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       val span = patienceConfig.timeout
@@ -137,8 +112,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "assertingReceiveA" should {
     "return an Future[Assertion] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       assertingReceiveA[ExpectedType].map{f => f should equal (succeed) }
@@ -147,8 +120,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "assertingReceiveAn" should {
     "return an Future[Assertion] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       assertingReceiveAn[ExpectedType].map{f => f should equal (succeed) }
@@ -157,8 +128,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "assertingReceiveA with span" should {
     "return an Future[Assertion] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       val span = patienceConfig.timeout
@@ -169,8 +138,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "assertingReceiveAn with span" should {
     "return an Future[Assertion] when ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       val span = patienceConfig.timeout
@@ -182,8 +149,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "assertingReceiveA" should {
     "fail when expecting NotExpectedType and ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       recoverToExceptionIf[ExecutionException] {
@@ -194,8 +159,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "assertingReceiveAn" should {
     "fail when expecting NotExpectedType and ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       recoverToExceptionIf[ExecutionException] {
@@ -206,8 +169,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "assertingReceiveA with span" should {
     "fail when expecting NotExpectedType and ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       val span = patienceConfig.timeout
@@ -220,8 +181,6 @@ class ReceivingASpec(system: ActorSystem) extends TestKit(system) with ImplicitS
 
   "assertingReceiveAn with span" should {
     "fail when expecting NotExpectedType and ExpectedType passed to the test actor" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
-
       echo ! ExpectedType()
 
       val span = patienceConfig.timeout

@@ -16,32 +16,23 @@
 package org.scalatestplus.akka
 
 import akka.actor.ActorSystem
-import akka.testkit.{ImplicitSender, TestActors, TestKit}
-import org.scalatest.{AsyncWordSpecLike, BeforeAndAfterAll, Matchers}
 import org.scalatest.exceptions.TestFailedException
 import org.scalatest.time.{Milliseconds, Span}
 
 import scala.concurrent.Future
 
-class ReceivingNoMsgSpec(system: ActorSystem) extends TestKit(system) with AsyncTestKitLike with ImplicitSender
-  with AsyncWordSpecLike with Matchers with BeforeAndAfterAll {
+class ReceivingNoMsgSpec(system: ActorSystem) extends AsyncSpecBase(system) {
 
   def this() = this(ActorSystem("ExampleSpec"))
 
-  override def afterAll() = {
-    TestKit.shutdownActorSystem(system)
-  }
-
   "the receivingNoMsg method" can {
     "not send any messages on its own" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
       echo ! "ping"
       expectMsg("ping")
       assertingReceiveNoMsg(Span(1000, Milliseconds))
     }
 
     "send back messages" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
       echo ! "ping"
       recoverToSucceededIf[TestFailedException](assertingReceiveNoMsg(Span(1000, Milliseconds)))
     }

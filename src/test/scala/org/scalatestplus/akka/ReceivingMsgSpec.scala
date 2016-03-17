@@ -3,9 +3,8 @@ package org.scalatestplus.akka
 import java.util.concurrent.ExecutionException
 
 import akka.actor.{Props, Actor, ActorSystem}
-import akka.testkit.{ImplicitSender, TestActors, TestKit}
 
-import org.scalatest._
+import org.scalatest.Succeeded
 import org.scalatest.time.{ Milliseconds, Seconds, Span}
 
 
@@ -15,17 +14,11 @@ class IgnoringActor extends Actor {
   }
 }
 
-class ReceivingMsgSpec(system: ActorSystem) extends TestKit(system) with ImplicitSender with AsyncTestKitLike
-  with AsyncWordSpecLike with Matchers with BeforeAndAfterAll {
+class ReceivingMsgSpec(system: ActorSystem) extends AsyncSpecBase(system) {
 
   def this() = this(ActorSystem("ReceivingMsg"))
 
   val ignoringActor = system.actorOf(Props[IgnoringActor])
-  val echo = system.actorOf(TestActors.echoActorProps)
-
-  override def afterAll() = {
-    TestKit.shutdownActorSystem(system)
-  }
 
   "Receive message using patience" should {
     "succeed" in {

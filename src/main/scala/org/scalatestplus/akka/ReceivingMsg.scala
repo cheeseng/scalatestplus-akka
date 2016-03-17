@@ -21,7 +21,7 @@ import akka.testkit.{TestKit, TestKitBase}
 
 import scala.concurrent.{duration, Future}
 
-import org.scalatest.{AsyncTestSuite, fixture, AsyncWordSpec, Assertion}
+import org.scalatest.{AsyncTestSuite, fixture, Assertion, Succeeded}
 import org.scalatest.concurrent.PatienceConfiguration
 import org.scalatest.time.Span
 
@@ -31,13 +31,6 @@ import org.scalatest.time.Span
  * def expectMsg[T](d: Duration, msg: T): T
  *
  * The given message object must be received within the specified time; the object will be returned.
- *
- * Please implement four methods, with these signatures:
- *
- * def receivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[T]
- * def receivingMsg[T](msg: T, timeout: Span): Future[T]
- * def assertingReceiveMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion]
- * def assertingReceiveMsg[T](msg: T, timeout: Span): Future[Assertion]
  */
 trait ReceivingMsg extends PatienceConfiguration {
   this :TestKitBase with AsyncTestSuite =>
@@ -55,8 +48,12 @@ trait ReceivingMsg extends PatienceConfiguration {
     expectMsg(duration, msg)
   }
 
-  def assertingReceiveMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion] = ???
+  def assertingReceiveMsg[T](msg: T)(implicit config: PatienceConfig): Future[Assertion] = {
+    assertingReceiveMsg(msg, config.timeout)
+  }
 
-  def assertingReceiveMsg[T](msg: T, timeout: Span): Future[Assertion] = ???
+  def assertingReceiveMsg[T](msg: T, timeout: Span): Future[Assertion] = {
+    receivingMsg(msg, timeout).map(_ => Succeeded)
+  }
 
 }

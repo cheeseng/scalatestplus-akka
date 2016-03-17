@@ -52,7 +52,7 @@ trait ReceivingNoMsg extends PatienceConfiguration {
       try {
         expectNoMsg(FiniteDuration(span.toMillis, TimeUnit.MILLISECONDS))
       } catch {
-        case err =>
+        case err: Throwable =>
           clue = err.getMessage
           result = false
       }
