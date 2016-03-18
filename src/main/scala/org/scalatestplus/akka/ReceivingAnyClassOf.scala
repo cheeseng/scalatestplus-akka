@@ -15,7 +15,6 @@
  */
 package org.scalatestplus.akka
 
-import akka.testkit.TestKit
 import org.scalatest.{Assertion, AsyncTestSuite, Succeeded}
 import org.scalatest.concurrent.PatienceConfiguration
 import org.scalatest.time.Span
