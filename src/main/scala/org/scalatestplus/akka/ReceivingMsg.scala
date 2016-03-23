@@ -15,13 +15,18 @@
  */
 package org.scalatestplus.akka
 
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.{LinkedBlockingDeque, TimeUnit}
+import javax.xml.ws.spi.Invoker
 
-import akka.testkit.{TestKit, TestKitBase}
+import akka.actor.{RepointableRef, ExtendedActorSystem, ActorRef}
+import akka.testkit.TestActor.Message
+import akka.testkit.{CallingThreadDispatcher, TestActor, TestKit, TestKitBase}
+import org.scalatest.PrivateMethodTester.PrivateMethod
 
 import scala.concurrent.{duration, Future}
 
-import org.scalatest.{AsyncTestSuite, fixture, Assertion, Succeeded}
+import org.scalatest._
 import org.scalatest.concurrent.PatienceConfiguration
 import org.scalatest.time.Span
 
@@ -32,12 +37,29 @@ import org.scalatest.time.Span
  *
  * The given message object must be received within the specified time; the object will be returned.
  */
-trait ReceivingMsg extends PatienceConfiguration {
+trait ReceivingMsg extends PatienceConfiguration with PrivateMethodTester {
   this :TestKitBase with AsyncTestSuite =>
 
   import org.scalatest.Assertions._
 
   import duration._
+
+  // TODO: We can use different queue here
+  private val queue = new LinkedBlockingDeque[Message]()
+  // Probably should move this to a companion object like TestKit
+  private[scalatestplus] val testActorId = new AtomicInteger(0)
+
+  override abstract val testActor: ActorRef = {
+    val impl = system.asInstanceOf[ExtendedActorSystem]
+    val ref = impl.systemActorOf(TestActor.props(queue)
+      .withDispatcher(CallingThreadDispatcher.Id),
+      "%s-%d".format(testActorName, testActorId.incrementAndGet))
+    awaitCond(ref match {
+      case r if r.getClass.getName == "akka.actor.RepointableRef" ⇒ (new Invoker(r)).invokePrivate[Boolean](new Invocation('isStarted))//r.isStarted
+      case _                 ⇒ true
+    }, 1 second, 10 millis)
+    ref
+  }
 
   def receivingMsg[T](msg: T)(implicit config: PatienceConfig): Future[T] = {
     receivingMsg(msg, config.timeout)
