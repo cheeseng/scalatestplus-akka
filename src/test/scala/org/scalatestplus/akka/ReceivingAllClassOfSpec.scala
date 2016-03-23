@@ -21,51 +21,42 @@ import org.scalatest.{AsyncWordSpecLike, BeforeAndAfterAll, Matchers, WordSpecLi
 import org.scalatest.time.{Seconds, Span}
 import java.util.concurrent.ExecutionException
 
-class ReceivingAnyClassOfSpec(system: ActorSystem) extends AsyncSpecBase(system) {
+class ReceivingAllClassOfSpec(system: ActorSystem) extends AsyncSpecBase(system) {
 
-  def this() = this(ActorSystem("ReceivingAnyClassOfSpec"))
-  
-  "receivingAnyClassOf" should {
+  def this() = this(ActorSystem("ReceivingAllClassOfSpec"))
+
+  "receivingAllClassOf" should {
     "async send back messages of same type" in {
       echo ! "hello world"
-      val fut = receivingAnyClassOf(classOf[String])
+      val fut = receivingAllClassOf(classOf[String])
       fut.map(_ => succeed)
     }
     "async send back messages of same type with span" in {
       echo ! "hello world"
-      val fut = receivingAnyClassOf(Span(1, Seconds))(classOf[String])
+      val fut = receivingAllClassOf(Span(1, Seconds))(classOf[String])
       fut.map(_ => succeed)
     }
     "match from list of classes" in {
       echo ! "hello world"
-      val fut = receivingAnyClassOf(classOf[Int], classOf[Double], classOf[String], classOf[Any])
-      fut.map(_ => succeed)
-    }
-    "should not match for number classes" in {
-      echo ! "hello world"
       val futureEx = recoverToExceptionIf[ExecutionException] {
-        receivingAnyClassOf(classOf[Int], classOf[Double])
+        receivingAllClassOf(classOf[Int], classOf[Double], classOf[String], classOf[Any])
       }
       futureEx.map(ex => Option(ex.getCause).map(cause => cause.getClass) shouldBe Some(classOf[AssertionError]))
     }
   }
-  "assertingReceiveAnyClassOf" should {
+  "assertingReceiveAllClassOf" should {
     "async send back messages of same type" in {
       echo ! "hello world"
-      assertingReceiveAnyClassOf(classOf[String])
+      assertingReceiveAllClassOf(classOf[String])
     }
     "async send back messages of same type with span" in {
       echo ! "hello world"
-      assertingReceiveAnyClassOf(Span(1, Seconds))(classOf[String])
+      assertingReceiveAllClassOf(Span(1, Seconds))(classOf[String])
     }
     "match from list of classes" in {
       echo ! "hello world"
-      assertingReceiveAnyClassOf(classOf[Int], classOf[Double], classOf[String], classOf[Any])
-    }
-    "should not match for number classes" in {
-      echo ! "hello world"
       val futureEx = recoverToExceptionIf[ExecutionException] {
-        assertingReceiveAnyClassOf(classOf[Int], classOf[Double])
+        assertingReceiveAllClassOf(classOf[Int], classOf[Double], classOf[String], classOf[Any])
       }
       futureEx.map(ex => Option(ex.getCause).map(cause => cause.getClass) shouldBe Some(classOf[AssertionError]))
     }

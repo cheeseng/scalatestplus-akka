@@ -17,9 +17,11 @@ package org.scalatestplus.akka
 
 import scala.concurrent.Future
 
-import org.scalatest.Assertion
+import org.scalatest.{Assertion, AsyncTestSuite, Succeeded}
 import org.scalatest.concurrent.PatienceConfiguration
 import org.scalatest.time.Span
+import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
 
 /**
  * Create async versions of expectMsgAllClassOf, which has this signature and description:
@@ -30,21 +32,25 @@ import org.scalatest.time.Span
  * the given time, and for each of the given classes there must exist at least one among the
  * received objects whose class equals (compared with ==) it (this is not a conformance check).
  * The full sequence of received objects is returned.
- *
- * Please implement four methods, with these signatures:
- *
- * def receivingAllClassOf[T](c: Class[_ <: T]*)(implicit config: PatienceConfig): Future[Seq[T]]
- * def receivingAllClassOf[T](c: Class[_ <: T]*)(timeout: Span): Future[Seq[T]]
- * def assertingReceiveAllClassOf[T](c: Class[_ <: T]*)(implicit config: PatienceConfig): Future[Assertion]
- * def assertingReceiveAllClassOf[T](c: Class[_ <: T]*)(timeout: Span): Future[Assertion]
  */
 trait ReceivingAllClassOf extends PatienceConfiguration {
 
-  def receivingAllClassOf[T](c: Class[_ <: T]*)(implicit config: PatienceConfig): Future[Seq[T]] = ???
+  this: AsyncTestKitLike with AsyncTestSuite =>
 
-  def receivingAllClassOf[T](c: Class[_ <: T]*)(timeout: Span): Future[Seq[T]] = ???
+  def receivingAllClassOf[T](c: Class[_ <: T]*)(implicit config: PatienceConfig): Future[Seq[T]] = {
+    receivingAllClassOf(config.timeout)(c: _*)
+  }
 
-  def assertingReceiveAllClassOf[T](c: Class[_ <: T]*)(implicit config: PatienceConfig): Future[Assertion] = ???
+  def receivingAllClassOf[T](timeout: Span)(c: Class[_ <: T]*): Future[Seq[T]] = {
+    val fd = FiniteDuration(timeout.length, timeout.unit)
+    Future { expectMsgAllClassOf(fd, c: _*) }
+  }
 
-  def assertingReceiveAllClassOf[T](c: Class[_ <: T]*)(timeout: Span): Future[Assertion] = ???
+  def assertingReceiveAllClassOf[T](c: Class[_ <: T]*)(implicit config: PatienceConfig): Future[Assertion] = {
+    assertingReceiveAllClassOf(config.timeout)(c: _*)
+  }
+
+  def assertingReceiveAllClassOf[T](timeout: Span)(c: Class[_ <: T]*): Future[Assertion] = {
+    receivingAllClassOf(timeout)(c: _*).map(_ => Succeeded)
+  }
 }

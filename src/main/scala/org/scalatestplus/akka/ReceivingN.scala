@@ -31,14 +31,6 @@ import scala.concurrent.duration.Duration
  * def receiveN(n: Int, d: Duration): Seq[AnyRef]
  *
  * n messages must be received within the given time; the received messages are returned.
- *
- * Please implement two methods, with these signatures:
- *
- * def receivingN[T](n: Int)(implicit config: PatienceConfig): Future[Seq[Any]]
- * def receivingN[T](n: Int)(timeout: Span): Future[Seq[Any]]
- *
- * Note: I'm not sure why receiveN returns a Seq[AnyRef] instead of Seq[Any]. Try to do Future[Seq[Any]].
- * Note: The reason there's no assertingReceiveN is it doesn't seem to be useful.
  */
 trait ReceivingN extends PatienceConfiguration with TestKitBase with AsyncTestSuite{
 

@@ -15,39 +15,48 @@
  */
 package org.scalatestplus.akka
 
-import akka.actor.{Actor, ActorSystem, Props}
-import akka.testkit.{ TestActors, TestKit, ImplicitSender }
+import akka.actor.ActorSystem
+import akka.testkit.TestActors
 import org.scalatest.{AsyncWordSpecLike, BeforeAndAfterAll, Matchers, WordSpecLike}
 import org.scalatest.time.{Seconds, Span}
 import java.util.concurrent.ExecutionException
 
-class AsyncReceivingAnyClassOfSpec(system: ActorSystem) extends TestKit(system) with AsyncTestKitLike with ImplicitSender
-  with AsyncWordSpecLike with Matchers with BeforeAndAfterAll {
+class ReceivingAllOfSpec(system: ActorSystem) extends AsyncSpecBase(system) {
 
-  def this() = this(ActorSystem("ExampleSpec"))
+  def this() = this(ActorSystem("ReceivingAllOfSpec"))
 
-  override def afterAll() = {
-    TestKit.shutdownActorSystem(system)
-  }
-
-  "An Echo actor" should {
+  "receivingAllOf" should {
     "async send back messages of same type" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
       echo ! "hello world"
-      val fut = receivingAnyClassOf(classOf[String])
+      val fut = receivingAllOf("hello world")
       fut.map(_ => succeed)
     }
-    "receivingAnyClassOf should match from list of classes" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
+    "async send back messages of same type with span" in {
       echo ! "hello world"
-      val fut = receivingAnyClassOf(classOf[Int], classOf[Double], classOf[String], classOf[Any])
+      val fut = receivingAllOf(Span(1, Seconds))("hello world")
       fut.map(_ => succeed)
     }
-    "receivingAnyClassOf should not match for number classes" in {
-      val echo = system.actorOf(TestActors.echoActorProps)
+    "match from list of values" in {
       echo ! "hello world"
       val futureEx = recoverToExceptionIf[ExecutionException] {
-        receivingAnyClassOf(classOf[Int], classOf[Double])
+        receivingAllOf("hello world", "goodbye world")
+      }
+      futureEx.map(ex => Option(ex.getCause).map(cause => cause.getClass) shouldBe Some(classOf[AssertionError]))
+    }
+  }
+  "assertingReceiveAllOf" should {
+    "async send back messages of same type" in {
+      echo ! "hello world"
+      assertingReceiveAllOf("hello world")
+    }
+    "async send back messages of same type with span" in {
+      echo ! "hello world"
+      assertingReceiveAllOf(Span(1, Seconds))("hello world")
+    }
+    "match from list of values" in {
+      echo ! "hello world"
+      val futureEx = recoverToExceptionIf[ExecutionException] {
+        assertingReceiveAllOf("hello world", "goodbye world")
       }
       futureEx.map(ex => Option(ex.getCause).map(cause => cause.getClass) shouldBe Some(classOf[AssertionError]))
     }

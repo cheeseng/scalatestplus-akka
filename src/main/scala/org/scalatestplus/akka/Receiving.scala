@@ -16,6 +16,8 @@
 package org.scalatestplus.akka
 
 import scala.concurrent.Future
+import scala.concurrent.duration.FiniteDuration
+import org.scalatest.AsyncTestSuite
 import org.scalatest.concurrent.PatienceConfiguration
 import org.scalatest.time.Span
 
@@ -27,18 +29,16 @@ import org.scalatest.time.Span
  * must be defined for that message; the result from applying the partial function to the
  * received message is returned. The duration may be left unspecified (empty parentheses are
  * required in this case) to use the deadline from the innermost enclosing within block instead.
- *
- * Please implement two methods, with these signatures:
- *
- * def receiving[T](pf: PartialFunction[Any, T])(implicit config: PatienceConfig): Future[T]
- * def receiving[T](timeout: Span)(pf: PartialFunction[Any, T]): Future[T]
- *
- * Note: The reason there's no assertingReceive is because the partial function passed to
- * receiving can already result in type Assertion.
  */
 trait Receiving extends PatienceConfiguration {
+  this: AsyncTestKitLike with AsyncTestSuite =>
+    
+  def receiving[T](pf: PartialFunction[Any, T])(implicit config: PatienceConfig): Future[T] = {
+    receiving(config.timeout)(pf)
+  }
 
-  def receiving[T](pf: PartialFunction[Any, T])(implicit config: PatienceConfig): Future[T] = ???
-
-  def receiving[T](timeout: Span)(pf: PartialFunction[Any, T]): Future[T] = ???
+  def receiving[T](timeout: Span)(pf: PartialFunction[Any, T]): Future[T] = {
+    val fd = FiniteDuration(timeout.length, timeout.unit)
+    Future { expectMsgPF[T](fd)(pf) }
+  }
 }

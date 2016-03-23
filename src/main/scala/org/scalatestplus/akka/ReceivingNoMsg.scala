@@ -32,11 +32,6 @@ import scala.concurrent.duration.FiniteDuration
  * No message must be received within the given time. This also fails if a message has
  * been received before calling this method which has not been removed from the queue
  * using one of the other methods.
- *
- * Please implement four methods, with these signatures:
- *
- * def assertingReceiveNoMsg[T](implicit config: PatienceConfig): Future[Assertion]
- * def assertingReceiveNoMsg[T](span: Span): Future[Assertion]
  */
 trait ReceivingNoMsg extends PatienceConfiguration {
   this: AsyncTestKitLike with AsyncTestSuite =>
@@ -52,7 +47,7 @@ trait ReceivingNoMsg extends PatienceConfiguration {
       try {
         expectNoMsg(FiniteDuration(span.toMillis, TimeUnit.MILLISECONDS))
       } catch {
-        case err =>
+        case err: Throwable =>
           clue = err.getMessage
           result = false
       }
